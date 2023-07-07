@@ -1,14 +1,12 @@
 package Interfaces;
 
-import Classes.Client;
-
 public interface iQueueBehavior 
 {
     /**
      * 
      * @return метод, воспроизводящий включение клиента в очередь
      */
-    void takeInQueue(Client client);
+    void takeInQueue(iClientBehavior client);
 
     /**
      * 

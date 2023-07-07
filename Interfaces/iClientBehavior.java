@@ -33,4 +33,6 @@ public interface iClientBehavior
      * @return метод отображения клиента
      */
     Client getClient();
+
+    public String getName();
 }

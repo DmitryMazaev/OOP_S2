@@ -2,21 +2,19 @@ package Interfaces;
 
 import java.util.List;
 
-import Classes.Client;
-
 public interface iMarketBehavior 
 {
     /**
      * 
      * @return метод, воспроизводящий вход в магазин
      */
-    void acceptToMarket(Client client);
+    void acceptToMarket(iClientBehavior client);
 
     /**
      * 
      * @return метод, воспроизводящий выход из магазина
      */
-    void releaseFromMarket(List<Client> client);
+    void releaseFromMarket(List<iClientBehavior> client);
 
     /**
      * 

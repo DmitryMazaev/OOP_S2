@@ -1,10 +1,8 @@
 ﻿package Classes;
 
-import Interfaces.iPromoBehavior;
-
 public class PromoClient extends Client
 {
-    public static int promoVolume = 3;
+    public static int promoVolume = 2;
 
     private int idPromo;
 
@@ -47,5 +45,10 @@ public class PromoClient extends Client
         return this;
     }
 
+    @Override
+    public String toString()
+    {
+        return getName();
+    }
     
 }

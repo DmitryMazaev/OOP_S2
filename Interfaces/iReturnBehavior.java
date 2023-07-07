@@ -1,7 +1,5 @@
 ﻿package Interfaces;
 
-import Classes.Client;
-
 public interface iReturnBehavior 
 {
     /**

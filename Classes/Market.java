@@ -1,12 +1,14 @@
 package Classes;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import Interfaces.iReturnBehavior;
+import Interfaces.iClientBehavior;
 import Interfaces.iMarketBehavior;
 import Interfaces.iPromoBehavior;
 import Interfaces.iQueueBehavior;
@@ -15,19 +17,19 @@ public class Market implements iMarketBehavior, iQueueBehavior, iReturnBehavior,
 
     public Market ()
     {
-        this.queue = new ArrayList <Client> ();
+        this.queue = new ArrayList <iClientBehavior> ();
     }
 
-    private List <Client> queue;
+    private List<iClientBehavior> queue;
     
-    private List<Client> satisfiedClients = new ArrayList<>();
+    private List<iClientBehavior> satisfiedClients = new ArrayList<>();
 
-    private List<Client> notSatisfiedClients = new ArrayList<>();
+    private List<iClientBehavior> notSatisfiedClients = new ArrayList<>();
 
     private List<PromoClient> promoSet = new ArrayList<>();
 
     @Override
-    public void acceptToMarket(Client client) 
+    public void acceptToMarket(iClientBehavior client) 
     {
         System.out.println("Клиент " + client.getClient().getName().toString() +" пришел(а) в магазин");
         takeInQueue(client);
@@ -35,7 +37,7 @@ public class Market implements iMarketBehavior, iQueueBehavior, iReturnBehavior,
 
 
     @Override
-    public void takeInQueue(Client client) {
+    public void takeInQueue(iClientBehavior client) {
         this.queue.add(client);
         System.out.println("Клиент " + client.getClient().getName()+" добавлен(а) в очередь ");
         
@@ -44,8 +46,8 @@ public class Market implements iMarketBehavior, iQueueBehavior, iReturnBehavior,
 
     @Override
     public void releaseFromQueue() {
-        List<Client> releaseClients = new ArrayList<>();
-        for(Client newClient:queue)
+        List<iClientBehavior> releaseClients = new ArrayList<>();
+        for(iClientBehavior newClient:queue)
         {
             if(newClient.isTakeOrder())
             {
@@ -60,9 +62,9 @@ public class Market implements iMarketBehavior, iQueueBehavior, iReturnBehavior,
 
 @Override
     public void giveOrder() {
-        for(Client newClient: queue)
+        for(iClientBehavior newClient: queue)
         {
-            if(newClient.isMakeOrder())
+            if(!newClient.isMakeOrder())
             {
                 newClient.setTakeOrder(true);
                 System.out.println("Клиент " + newClient.getClient().getName()+" получил(а) свой заказ ");
@@ -72,21 +74,24 @@ public class Market implements iMarketBehavior, iQueueBehavior, iReturnBehavior,
 
     @Override
     public void takeOrder() {
-        for(Client newClient:queue)
+        for(iClientBehavior newClient:queue)
         {
             if(!newClient.isMakeOrder())
             {
                 newClient.setMakeOrder(true);
                 System.out.println("Клиент " + newClient.getClient().getName()+" сделал(а) заказ ");
-
+                if (newClient.getClass().getName().equals("Classes.PromoClient"))
+                {
+                    takeInPromoQueue((PromoClient)newClient);
+                }
             }
         }
     }
 
 
     @Override
-    public void releaseFromMarket(List<Client> clients) {
-        for(Client newClient:clients)
+    public void releaseFromMarket(List<iClientBehavior> clients) {
+        for(iClientBehavior newClient:clients)
         {
             System.out.println("Клиент " + newClient.getName()+" ушел(а) из магазина ");
             queue.remove(newClient);
@@ -98,7 +103,7 @@ public class Market implements iMarketBehavior, iQueueBehavior, iReturnBehavior,
 
     @Override
     public void evaluateOrder() {
-        for(Client newClient:queue)
+        for(iClientBehavior newClient:queue)
         {
             Random rnd = new Random();
             int a = rnd.nextInt(0, 2);
@@ -118,7 +123,7 @@ public class Market implements iMarketBehavior, iQueueBehavior, iReturnBehavior,
 
     @Override
     public void returnOrder() {
-        for(Client newClient: notSatisfiedClients)
+        for(iClientBehavior newClient: notSatisfiedClients)
         {
             System.out.println("Клиент " + newClient.getClient().getName()+" вернул(а) товар");
         }
@@ -129,7 +134,6 @@ public class Market implements iMarketBehavior, iQueueBehavior, iReturnBehavior,
     {
         takeOrder();     
         giveOrder();
-        takeInPromoQueue(null); /// Вопрос!
         evaluateOrder();
         returnOrder();
         releaseFromQueue();
@@ -138,9 +142,10 @@ public class Market implements iMarketBehavior, iQueueBehavior, iReturnBehavior,
     @Override
     public void takeInPromoQueue(PromoClient promoClient) //Вопрос!
     {
-            if (this.promoSet.size() <= promoClient.promoVolume)
+            if (this.promoSet.size() < promoClient.promoVolume)
             {
                 System.out.println("Участник акции " + promoClient + " предъявил купон на участие в акции");
+                System.out.println("Участник акции " + promoClient + " получил подарок");
                 promoSet.add(promoClient);
 
             }
@@ -149,20 +154,4 @@ public class Market implements iMarketBehavior, iQueueBehavior, iReturnBehavior,
                 System.out.println("Участнику акции " + promoClient + " отказано в участии, поскольку превышено число возможных участников");
             }
     }
-
-    @Override
-    public void participationPromo(List<PromoClient> promoSet) //Вопрос!
-    {
-        for(PromoClient newProClient: promoSet)
-        {
-            for(Client newClient: satisfiedClients)
-            {
-                System.out.println("Участник акции " + newClient + " получил подарок");
-            }
-        }
-    }
-
-
-    
-    
 }

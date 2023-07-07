@@ -1,13 +1,13 @@
 ﻿package Interfaces;
 
-import java.util.List;
-
-import Classes.Client;
 import Classes.PromoClient;
 
-public interface iPromoBehavior {
+public interface iPromoBehavior 
+{
+    /**
+     * 
+     * @return метод, воспроизводящий добавление в очередь акционных клиентов и выдачу подарка
+     */
+    void takeInPromoQueue(PromoClient promoClient);
 
-    void takeInPromoQueue(PromoClient promoClient); //Вопрос!
-    
-    void participationPromo(List<PromoClient> promoSet); //Вопрос!
 }
